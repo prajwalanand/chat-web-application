@@ -1,0 +1,135 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<script type="text/javascript" src="http://localhost/project/chooseuser.js"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <!--[if IE]>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <![endif]-->
+    <title>Chat</title>
+    <!-- BOOTSTRAP CORE STYLE CSS -->
+    <link href="assets/css/bootstrap.css" rel="stylesheet" />
+
+</head>
+<body style="font-family:Verdana; background: url(london.jpg) no-repeat center" onload="obj.init()">
+  <div class="container">
+<div class="row " style="padding-top:40px;">
+	<div class="container">
+		<div class="col-md-2">
+			<a href="#" onclick="obj.dp()">Profile picture</a>
+		</div>
+		<div class="col-md-8">
+			<h3 class="text-center" style="background-color: white">List of Users</h3>
+		</div>
+		<div class="col-md-2">
+			<a href="#" onclick="obj.logout()">Logout</a>
+		</div>
+	</div>
+    <br /><br />
+	<div class="col-md-2">
+	</div>
+    <div class="col-md-8">
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+               ONLINE USERS
+            </div>
+            <div class="panel-body">
+                <ul class="media-list">
+
+                                    <li class="media">
+
+                                        <div class="media-body">
+
+                                            <div class="media">
+                                                <a class="pull-left" href="#">
+                                                    <img class="media-object img-circle" style="max-height:40px;" id="img1" />
+                                                </a>
+                                                <div class="media-body" >
+                                                    <a onclick="obj.gotochat('usr1')" href="#" id="usr1"></a>
+                                                    
+                                                   
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </li>
+     <li class="media">
+
+                                        <div class="media-body">
+
+                                            <div class="media">
+                                                <a class="pull-left" href="#">
+                                                    <img class="media-object img-circle" style="max-height:40px;" id="img2" />
+                                                </a>
+                                                <div class="media-body" >
+                                                    <a onclick="obj.gotochat('usr2')" href="#" id="usr2"></a>
+                                                    
+                                                   
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </li>
+                    <li class="media">
+
+                                        <div class="media-body">
+
+                                            <div class="media">
+                                                <a class="pull-left" href="#">
+                                                    <img class="media-object img-circle" style="max-height:40px;" id="img3" />
+                                                </a>
+                                                <div class="media-body" >
+                                                    <a onclick="obj.gotochat('usr3')" href="#" id="usr3"></a>
+                                                    
+                                                   
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </li>
+                    <li class="media">
+
+                                        <div class="media-body">
+
+                                            <div class="media">
+                                                <a class="pull-left" href="#">
+                                                    <img class="media-object img-circle" style="max-height:40px;" id="img4" />
+                                                </a>
+                                                <div class="media-body" >
+                                                    <a onclick="obj.gotochat('usr4')" href="#" id="usr4"></a>
+                                                    
+                                                   
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </li>
+                     <li class="media">
+
+                                        <div class="media-body">
+
+                                            <div class="media">
+                                                <a class="pull-left" href="#">
+                                                    <img class="media-object img-circle" style="max-height:40px;" id="img5" />
+                                                </a>
+                                                <div class="media-body" >
+                                                    <a onclick="obj.gotochat('usr5')" href="#" id="usr5"></a>
+                                                    
+                                                   
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </li>
+                                </ul>
+                </div>
+            </div>
+        
+    </div>
+</div>
+  </div>
+</body>
+</html>

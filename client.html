@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Chat</title>
+<style type="text/css">
+
+.inputForm
+{	
+	border-radius:10px;
+	behavior:url("border-radius.htc");
+}
+
+span
+{
+	font-family: "Gravitas One", Lato;
+}
+
+body
+{
+	background: url(wp.jpg) no-repeat center;
+}
+
+.bubble
+{
+    background-color: #F2F2F2;
+    border-radius: 5px;
+	display: block;
+    box-shadow: 0 0 6px #B2B2B2;
+    padding: 10px 18px;
+    position: relative;
+    vertical-align: top;
+	white-space: nowrap;
+	clear: both;
+}
+
+.bubble::before
+{
+    background-color: #F2F2F2;
+    content: "\00a0";
+    display: block;
+    height: 16px;
+    position: absolute;
+    top: 11px;
+    transform:             rotate( 29deg ) skew( -35deg );
+        -moz-transform:    rotate( 29deg ) skew( -35deg );
+        -ms-transform:     rotate( 29deg ) skew( -35deg );
+        -o-transform:      rotate( 29deg ) skew( -35deg );
+        -webkit-transform: rotate( 29deg ) skew( -35deg );
+    width:  20px;
+}
+
+.me
+{
+	float: left;
+    margin: 5px 45px 5px 20px;
+}
+
+.me::before
+{
+    box-shadow: -2px 2px 2px 0 rgba( 178, 178, 178, .4 );
+    left: -9px;          
+}
+
+.you
+{
+	float: right;
+    margin: 5px 20px 5px 45px;       
+}
+
+.you::before
+{
+    box-shadow: 2px -2px 2px 0 rgba( 178, 178, 178, .4 );
+    right: -9px;
+}
+
+</style>
+<link rel="stylesheet" href="http://localhost/bootstrap/css/bootstrap.css">
+<script type="text/javascript">
+obj =
+{
+	user: "",
+	friend: "",
+	init: function()
+	{
+		obj.user = localStorage.getItem("user");
+		obj.friend = localStorage.getItem("friend");
+		div = document.getElementById("fr");
+		p = document.createElement("span");
+		p.innerHTML = "      " + obj.friend;
+		p.style.fontSize = "50px";
+		frdp = document.createElement("img");
+		frdp.src = "http://localhost/project/" + obj.friend + ".jpg" + '?' + (new Date()).getTime();
+		frdp.height = "120";
+		frdp.width = "120";
+		div.appendChild(frdp);
+		div.appendChild(p);
+		textbox = document.getElementById("msg");
+		textbox.onkeypress = obj.checkKey;
+		ev = new EventSource("http://localhost/project/monitor.php");
+		ev.addEventListener("myevent", obj.serverMsg, false);
+	},
+	checkKey: function(e)
+	{
+		if(e.keyCode == 13)
+		{
+			obj.sendMsg();
+		}
+	},
+	xhr: new XMLHttpRequest(),
+	sendMsg: function()
+	{
+		msgbox = document.getElementById("msg");
+		msg = msgbox.value;
+		if(msg != "")
+		{
+			msgbox.value = "";
+			obj.xhr.onreadystatechange = obj.msgStatus;
+			obj.xhr.open("GET", "http://localhost/project/recvdata.php?msg="+msg+"&user="+obj.user+"&friend="+obj.friend, true);
+			obj.xhr.send();
+		}
+	},
+	msgStatus: function()
+	{
+		if(this.readyState == 4 && this.status == 200)
+		{
+			this.abort();
+		}
+	},
+	sendFile: function()
+	{
+		file = document.getElementById("file");
+		upload = file.files[0];
+		if(upload)
+		{
+			form = new FormData();
+			form.append("user", obj.user);
+			form.append("friend", obj.friend);
+			form.append("file", upload);
+			obj.xhr.onreadystatechange = obj.msgStatus;
+			obj.xhr.open("POST", "http://localhost/project/recvfile.php", true);
+			obj.xhr.send(form);
+		}
+	},
+	serverMsg: function(e)
+	{
+		contents = e.data.split(",");
+		if(contents)
+		{
+			if(contents[0] == "" || contents[1] == "" || contents[2] == "" || contents[3] == "")
+			{
+				inxhr = new XMLHttpRequest();
+				inxhr.onreadystatechange = obj.networkerror;
+				inxhr.open("GET", "http://localhost/project/networkerror.php", true);
+				inxhr.send();
+			}
+			else
+			{
+				obj.render(contents);
+			}
+		}
+		else
+		{
+			inxhr = new XMLHttpRequest();
+			inxhr.onreadystatechange = obj.networkerror;
+			inxhr.open("GET", "http://localhost/project/networkerror.php", true);
+			inxhr.send();
+		}
+	},
+	networkerror: function()
+	{
+		if(this.readyState == 4 && this.status == 200)
+		{
+			contents = this.responseText.split(",");
+			obj.render(contents);
+		}
+	},
+	render: function(contents)
+	{
+		if(((contents[0] == obj.user) && (contents[1] == obj.friend)) || ((contents[0] == obj.friend) && (contents[1] == obj.user)))
+		{
+			outdiv = document.getElementById("outer");
+			if(contents[2] == "text")
+			{
+				indiv = document.createElement("div");
+				indiv.innerHTML = contents[3];
+				if(contents[0] == obj.user)
+				{
+					indiv.className = "bubble you";
+				}
+				else
+				{
+					indiv.className = "bubble me";
+				}
+				outdiv.appendChild(indiv);
+			}
+			else if(contents[2] == "image")
+			{
+				img = document.createElement("img");
+				img.src = "http://localhost/project/" + contents[3];
+				img.height = "250";
+				img.width = "250";
+				indiv = document.createElement("div");
+				indiv.innerHTML = "<p>Image</p>";
+				if(contents[0] == obj.user)
+				{
+					indiv.className = "bubble you";
+				}
+				else
+				{
+					indiv.className = "bubble me";
+				}
+				indiv.appendChild(img);
+				outdiv.appendChild(indiv);
+			}
+			else if(contents[2] == "video")
+			{
+				vid = document.createElement("video");
+				vid.src = "http://localhost/project/" + contents[3];
+				vid.controls = "true";
+				vid.height = "250";
+				vid.width = "250";
+				indiv = document.createElement("div");
+				indiv.innerHTML = "<p>Video</p>";
+				if(contents[0] == obj.user)
+				{
+					indiv.className = "bubble you";
+				}
+				else
+				{
+					indiv.className = "bubble me";
+				}
+				indiv.appendChild(vid);
+				outdiv.appendChild(indiv);
+			}
+			else
+			{
+				indiv = document.createElement("div");
+				indiv.innerHTML = "<p>File " + contents[3] + "</p>";
+				if(contents[0] == obj.user)
+				{
+					indiv.className = "bubble you";
+				}
+				else
+				{
+					indiv.className = "bubble me";
+				}
+				outdiv.appendChild(indiv);
+			}
+			outdiv.scrollTop = outdiv.scrollHeight;
+		}
+	},
+	back: function(e)
+	{
+		localStorage.setItem("user", obj.user);
+		localStorage.setItem("friend", obj.friend);
+		location.href = "http://localhost/project/list/index.html";
+	}
+};
+</script>
+</head>
+<body onload="obj.init()">
+<div class="container">
+<div class="col-md-3"></div>
+<div class="col-md-7" id="fr" style="height: 120px;"></div>
+<div class="col-md-2"><a onclick="obj.back()" href="#" style="font-size: 25px; background-color: white;">Back</a></div>
+</div>
+<div class="container">
+<div class="col-md-3"></div>
+<div class="col-md-5" id="outer" style="background-color: black; border: 3px solid black; height: 500px; overflow-y: scroll; overflow: scroll/auto;"></div>
+<div class="col-md-3"></div>
+</div>
+<div class="container">
+<div class="col-md-3"></div>
+<div class="col-md-4" ><input class="form-control form-input form-style-base" type="text" id="msg" placeholder="Type message here"/></div>
+<div class="col-md-3"><button class="btn btn-primary" class="btn btn-primary" onclick="obj.sendMsg()">Send</button class="btn btn-primary"></div>
+<div class="col-md-2"></div>
+</div>
+<br/>
+<div class="container">
+<div class="col-md-3"></div>
+<div class="col-md-4">
+	<input class="form-control form-input form-style-base" type="file" id="file" />
+</div>
+<div class="col-md-3"><button class="btn btn-primary" class="btn btn-primary" onclick="obj.sendFile()">Upload</button class="btn btn-primary"></div>
+<div class="col-md-2"></div>
+</div>
+<br/>
+</body>
+</html>

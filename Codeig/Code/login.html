@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Chat</title>
+<script type="text/javascript">
+obj =
+{
+	init: function()
+	{
+		passbox = document.getElementById("pwd");
+		passbox.onkeypress = obj.checkKey;
+	},
+	checkKey: function(e)
+	{
+		if(e.keyCode == 13)
+		{
+			obj.signup();
+		}
+	},
+	xhr: new XMLHttpRequest(),
+	user: "",
+	signup: function()
+	{
+		userbox = document.getElementById("usr");
+		obj.user = userbox.value;
+		userbox.value = "";
+		passbox = document.getElementById("pwd");
+		pass = passbox.value;
+		passbox.value = "";
+		if((obj.user == "") || (pass == ""))
+		{
+			
+		}
+		else
+		{
+			obj.xhr.onreadystatechange = obj.verify;
+			obj.xhr.open("POST", "login.php", true);
+			obj.xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+			obj.xhr.send("usr="+obj.user+"&pwd="+pass);
+		}
+	},
+	verify: function()
+	{
+		if(this.readyState == 4 && this.status == 200)
+		{
+			if(this.responseText == 1)
+			{
+				out = document.getElementById("stat");
+				out.innerHTML = "Login successful!<br/>";
+				out.style.color = "blue";
+				localStorage.setItem('user', obj.user);
+				out.innerHTML += "Click <a href=\"chooseuser.html\"> here</a> to continue";
+			}
+			else
+			{
+				out = document.getElementById("stat");
+				out.innerHTML = this.responseText + "<br/>Login failed; retry<br/>";
+				out.innerHTML += "Or sign up <a href=\"signup.html\">here</a>";
+				out.style.color = "red";
+			}
+		}
+	}
+};
+</script>
+</head>
+<body onload="obj.init()">
+<h3>LOGIN</h3>
+<div id="outer" style="border: 3px solid black; height: 500px; width: 300px;">
+<br/><br/>
+<label>Username <input type="text" id="usr" /></label>
+<br/><br/>
+<label>Password <input type="password" id="pwd" /></label>
+<br/><br/>
+<button onclick="obj.signup()">Submit</button>
+<div id="stat">
+</div>
+</div>
+</body>
+</html>
